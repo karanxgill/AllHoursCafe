@@ -1,0 +1,34 @@
+@model AllHoursCafe.API.Models.ReservationPaymentViewModel
+
+@{
+    ViewData["Title"] = "Reservation Payment";
+}
+
+<section class="payment-section">
+    <div class="container">
+        <div class="payment-header">
+            <h1>Reservation Payment</h1>
+            <p>Pay ₹500 to confirm your reservation</p>
+        </div>
+
+        <div class="payment-content">
+            <div class="payment-form-container">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    Reservation for: <strong>@Model.Name</strong> | Email: <strong>@Model.Email</strong> | Phone: <strong>@Model.PhoneNumber</strong>
+                </div>
+                <div class="order-summary mt-4 mb-4">
+                    <h4>Total Amount: <span style="color:#5c4033">₹@Model.Amount.ToString("F2")</span></h4>
+                </div>
+                @if (ViewBag.PayUForm != null)
+                {
+                    @Html.Raw(ViewBag.PayUForm)
+                }
+                else
+                {
+                    <div class="alert alert-danger">Unable to generate payment form. Please try again.</div>
+                }
+            </div>
+        </div>
+    </div>
+</section>

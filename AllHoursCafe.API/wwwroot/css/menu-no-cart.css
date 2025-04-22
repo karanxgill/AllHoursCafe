@@ -1,0 +1,42 @@
+/* CSS to adjust menu layout without the cart dropdown */
+
+/* Make the menu items container take full width */
+.menu-items-container {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+/* Adjust the grid layout for menu items */
+.items-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    width: 100%;
+}
+
+/* Ensure menu content uses the full width */
+.menu-content {
+    display: block !important;
+    width: 100%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+    .menu-content {
+        flex-direction: column;
+    }
+
+    .menu-items-container {
+        width: 100%;
+        order: 1;
+    }
+
+    .items-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .items-grid {
+        grid-template-columns: 1fr;
+    }
+}

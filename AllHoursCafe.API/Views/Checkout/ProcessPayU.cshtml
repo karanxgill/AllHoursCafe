@@ -1,0 +1,95 @@
+@model AllHoursCafe.API.Models.Order
+
+@{
+    ViewData["Title"] = "Redirecting to PayU";
+}
+
+<link rel="stylesheet" href="/css/payment-processing.css" />
+
+<section class="payment-processing-section">
+    <div class="container">
+        <div class="payment-processing-content">
+            <div class="processing-icon">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="sr-only">Processing...</span>
+                </div>
+            </div>
+            <h1>Redirecting to PayU Payment Gateway</h1>
+            <p>Please wait while we redirect you to the secure PayU payment gateway...</p>
+            
+            <div class="order-details">
+                <h2>Order Details</h2>
+                <div class="detail-row">
+                    <span class="detail-label">Order ID:</span>
+                    <span class="detail-value">#@Model.Id</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Order Date:</span>
+                    <span class="detail-value">@Model.OrderDate.ToString("dd MMM yyyy, hh:mm tt")</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Amount:</span>
+                    <span class="detail-value">₹@Model.Total.ToString("F2")</span>
+                </div>
+            </div>
+            
+            <div class="redirect-form-container">
+                <form id="payuForm" action="@ViewBag.PaymentUrl" method="post">
+                    @foreach (var param in ViewBag.PayUParams)
+                    {
+                        <input type="hidden" name="@param.Key" value="@param.Value" />
+                    }
+                    
+                    <div class="manual-redirect">
+                        <p>If you are not automatically redirected, please click the button below:</p>
+                        <button type="submit" class="btn btn-primary" id="payuSubmitBtn">
+                            <i class="fas fa-external-link-alt mr-2"></i> Proceed to PayU
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Get references to elements
+            const payuForm = document.getElementById('payuForm');
+            const payuSubmitBtn = document.getElementById('payuSubmitBtn');
+            
+            // Add click event listener to the submit button
+            if (payuSubmitBtn) {
+                payuSubmitBtn.addEventListener('click', function(e) {
+                    e.preventDefault(); // Prevent default form submission
+                    
+                    // Change button text and disable it
+                    payuSubmitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
+                    payuSubmitBtn.disabled = true;
+                    
+                    // Submit the form after a short delay
+                    setTimeout(function() {
+                        payuForm.submit();
+                    }, 500);
+                });
+            }
+            
+            // Auto-submit the form after a short delay
+            setTimeout(function() {
+                try {
+                    console.log('Auto-submitting form to PayU...');
+                    payuForm.submit();
+                    console.log('Form submitted successfully');
+                } catch (error) {
+                    console.error('Error submitting form:', error);
+                    // Enable the button again if auto-submission fails
+                    if (payuSubmitBtn) {
+                        payuSubmitBtn.innerHTML = '<i class="fas fa-external-link-alt mr-2"></i> Proceed to PayU';
+                        payuSubmitBtn.disabled = false;
+                    }
+                }
+            }, 2000);
+        });
+    </script>
+}

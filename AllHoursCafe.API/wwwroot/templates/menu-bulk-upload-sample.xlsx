@@ -1,0 +1,6 @@
+[Excel file will be created with columns: Name, Category, Price, Description, ImageUrl, IsActive (TRUE/FALSE), Calories, PrepTimeMinutes, IsVegetarian, IsVegan, IsGlutenFree, SpicyLevel]
+
+Example row:
+Avocado Toast, Breakfast, 100, Toasted bread with avocado, /images/Items/breakfast/Avocado-Toast.jpg, TRUE, 250, 10, TRUE, TRUE, FALSE, 1
+
+(Actual binary Excel content will be created in a real environment. Here, just a description for code context.)

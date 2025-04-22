@@ -1,0 +1,340 @@
+@model AllHoursCafe.API.Controllers.PaymentViewModel
+
+@{
+    ViewData["Title"] = "Complete Payment";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+<style>
+    /* Reset body styles */
+    .payment-page-container {
+        padding: 2px 0;
+        display: flex;
+        justify-content: center;
+        min-height: unset;
+        height: auto;
+    }
+
+    .payment-container {
+        max-width: 500px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 0;
+        height: auto;
+        min-height: unset;
+    }
+
+    .payment-card {
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        border: none;
+        overflow: hidden;
+        background-color: #fff;
+        margin: 0 auto;
+        width: 100%;
+        padding: 0;
+        height: auto;
+        min-height: unset;
+    }
+
+    .payment-header {
+        background-color: #5c4033;
+        color: white;
+        padding: 6px 10px;
+        position: relative;
+    }
+
+    .payment-header h2 {
+        font-weight: 600;
+        margin-bottom: 0;
+        font-size: 1.1rem;
+    }
+
+    .payment-body {
+        padding: 6px 10px;
+    }
+
+    .payment-method-option {
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        padding: 6px 8px;
+        margin-bottom: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+    }
+
+    .payment-method-option:hover {
+        border-color: #5c4033;
+        background-color: #f9f5f2;
+    }
+
+    .payment-method-option.selected {
+        border-color: #5c4033;
+        background-color: #f9f5f2;
+    }
+
+    .payment-method-icon {
+        font-size: 18px;
+        margin-right: 8px;
+        color: #5c4033;
+        width: 25px;
+        text-align: center;
+    }
+
+    .payment-method-details {
+        flex-grow: 1;
+    }
+
+    .payment-method-name {
+        font-weight: 600;
+        margin-bottom: 0;
+        font-size: 0.9rem;
+    }
+
+    .payment-method-description {
+        font-size: 0.75rem;
+        color: #666;
+        margin-top: 2px;
+        line-height: 1.2;
+    }
+
+    .order-summary {
+        background-color: #f9f5f2;
+        border-radius: 6px;
+        padding: 2px 4px;
+        margin-top: 2px;
+        margin-bottom: 2px;
+        height: auto !important;
+        min-height: unset !important;
+        max-height: unset !important;
+        box-sizing: border-box;
+    }
+
+    .order-total {
+        font-size: 18px;
+        font-weight: 700;
+        color: #5c4033;
+    }
+
+    .btn-payment {
+        background-color: #5c4033;
+        border-color: #5c4033;
+        padding: 6px 15px;
+        font-weight: 600;
+        border-radius: 20px;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+    }
+
+    .btn-payment:hover {
+        background-color: #4a3328;
+        border-color: #4a3328;
+        transform: translateY(-2px);
+        box-shadow: 0 3px 10px rgba(92, 64, 51, 0.3);
+    }
+
+    .btn-back {
+        background-color: #e0e0e0;
+        border-color: #e0e0e0;
+        color: #333;
+        padding: 6px 15px;
+        font-weight: 600;
+        border-radius: 20px;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+    }
+
+    .btn-back:hover {
+        background-color: #d0d0d0;
+        border-color: #d0d0d0;
+        color: #333;
+    }
+
+    .secure-badge {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 8px;
+        color: #666;
+        font-size: 0.75rem;
+    }
+
+    .secure-badge i {
+        color: #5c4033;
+        margin-right: 5px;
+    }
+
+    .payment-info {
+        font-size: 0.75rem;
+        color: #666;
+        margin-top: 4px;
+        text-align: center;
+    }
+
+    .action-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 4px;
+        margin-bottom: 4px;
+    }
+
+    /* Make sure the payment form is properly displayed */
+    .payment-container {
+        min-height: 200px;
+        margin-bottom: 20px;
+    }
+
+    /* Page title styling */
+    .container h2.text-center {
+        color: #5c4033;
+        font-weight: 600;
+        margin-top: 18px !important;
+        margin-bottom: 10px !important;
+        font-size: 1.3rem;
+    }
+
+    /* Responsive styles */
+    @@media (max-width: 768px) {
+        .container {
+            padding: 0 10px;
+        }
+
+        .payment-container {
+            width: 100%;
+        }
+
+        .payment-header h2 {
+            font-size: 1.1rem;
+        }
+
+        .payment-body {
+            padding: 10px 12px;
+        }
+
+        .payment-method-icon {
+            font-size: 16px;
+            width: 20px;
+        }
+
+        .payment-method-name {
+            font-size: 0.85rem;
+        }
+
+        .payment-method-description {
+            font-size: 0.7rem;
+        }
+
+        .order-total {
+            font-size: 16px;
+        }
+
+        .btn-payment, .btn-back {
+            padding: 5px 12px;
+            font-size: 0.85rem;
+        }
+    }
+</style>
+
+<div class="container">
+    <h2 class="text-center mt-4 mb-2">Complete Your Order</h2>
+    <div class="payment-page-container">
+        <div class="payment-container">
+            <div class="payment-card">
+                <div class="payment-header">
+                    <h2><i class="fas fa-credit-card mr-2"></i> Payment</h2>
+                </div>
+                <div class="payment-body">
+                    <form asp-action="Payment" asp-route-id="@Model.OrderId" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="mb-2" style="font-size: 0.9rem; font-weight: 600;">Select Payment Method</div>
+
+                    @foreach (var method in Model.PaymentMethods)
+                    {
+                        <div class="payment-method-option @(method == "PayU" ? "selected" : "")" onclick="selectPaymentMethod(this, '@method')">
+                        <div class="payment-method-icon">
+                            @if (method == "PayU")
+                            {
+                                <i class="fas fa-university"></i>
+                            }
+                            else if (method == "Credit Card")
+                            {
+                                <i class="far fa-credit-card"></i>
+                            }
+                            else
+                            {
+                                <i class="fas fa-wallet"></i>
+                            }
+                        </div>
+                        <div class="payment-method-details">
+                            <div class="payment-method-name">@method</div>
+                            <div class="payment-method-description">
+                                @if (method == "PayU")
+                                {
+                                    <span>Secure payment via PayU</span>
+                                }
+                                else if (method == "Credit Card")
+                                {
+                                    <span>Pay with Visa, Mastercard, or Amex</span>
+                                }
+                                else
+                                {
+                                    <span>Alternative payment method</span>
+                                }
+                            </div>
+                        </div>
+                        <div class="ml-auto">
+                            <input type="radio" name="PaymentMethod" value="@method" @(method == "PayU" ? "checked" : "") style="transform: scale(1.2);">
+                        </div>
+                    </div>
+                    }
+
+                    <div class="mb-2 mt-3" style="font-size: 0.9rem; font-weight: 600;">Order Summary</div>
+                    <div class="order-summary">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div style="font-size: 0.85rem; font-weight: 600;">Order #@Model.OrderId</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 0.75rem; color: #666;">Total Amount</div>
+                                <div class="order-total">₹@Model.Total.ToString("F2")</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <a asp-action="Index" class="btn btn-back">
+                            <i class="fas fa-arrow-left mr-1"></i> Back
+                        </a>
+                        <button type="submit" class="btn btn-payment btn-primary">
+                            Complete Payment <i class="fas fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+
+                    <div class="secure-badge">
+                        <i class="fas fa-lock"></i> Secure payment
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<script>
+    function selectPaymentMethod(element, method) {
+        // Remove selected class from all options
+        document.querySelectorAll('.payment-method-option').forEach(option => {
+            option.classList.remove('selected');
+        });
+
+        // Add selected class to clicked option
+        element.classList.add('selected');
+
+        // Check the radio button
+        document.querySelector(`input[name="PaymentMethod"][value="${method}"]`).checked = true;
+    }
+</script>

@@ -1,0 +1,126 @@
+/* Payment Processing Page Styles */
+
+.payment-processing-section {
+    padding: 50px 0;
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+}
+
+.payment-processing-content {
+    max-width: 700px;
+    margin: 0 auto;
+    text-align: center;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 40px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.processing-icon {
+    margin-bottom: 30px;
+}
+
+.spinner-border {
+    width: 4rem;
+    height: 4rem;
+    border-width: 0.3em;
+}
+
+.payment-processing-content h1 {
+    margin-bottom: 15px;
+    color: #333;
+    font-size: 28px;
+}
+
+.payment-processing-content p {
+    color: #666;
+    font-size: 18px;
+    margin-bottom: 30px;
+}
+
+.order-details, .reservation-details {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 30px 0;
+    text-align: left;
+}
+
+.order-details h2, .reservation-details h2 {
+    font-size: 22px;
+    margin-bottom: 15px;
+    color: #333;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+}
+
+.detail-row {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.detail-label {
+    font-weight: bold;
+    width: 120px;
+    color: #666;
+}
+
+.detail-value {
+    flex: 1;
+}
+
+.redirect-form-container {
+    margin-top: 30px;
+}
+
+.manual-redirect {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px dashed #ddd;
+}
+
+.manual-redirect p {
+    font-size: 14px;
+    color: #888;
+    margin-bottom: 15px;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.btn-primary {
+    animation: pulse 2s infinite;
+}
+
+@media (max-width: 768px) {
+    .payment-processing-content {
+        padding: 20px;
+    }
+
+    .payment-processing-content h1 {
+        font-size: 24px;
+    }
+
+    .payment-processing-content p {
+        font-size: 16px;
+    }
+
+    .detail-row {
+        flex-direction: column;
+    }
+
+    .detail-label {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+}

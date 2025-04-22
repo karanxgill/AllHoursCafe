@@ -1,0 +1,17 @@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Redirecting to PayU...</title>
+</head>
+<body>
+    <h2>Redirecting to PayU for payment...</h2>
+    @Html.Raw(ViewBag.PayUForm)
+    <script>
+        // Auto-submit the PayU form if it exists
+        document.forms[0]?.submit();
+    </script>
+</body>
+</html>

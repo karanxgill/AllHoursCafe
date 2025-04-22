@@ -1,0 +1,537 @@
+@model List<AllHoursCafe.API.Models.SavedAddress>
+
+@{
+    ViewData["Title"] = "Manage Addresses";
+}
+
+<link rel="stylesheet" href="/css/address-management.css" />
+
+<script>
+    // Hide the warning message if addresses are present
+    window.onload = function() {
+        if (document.querySelectorAll('.address-card').length > 0) {
+            var warnings = document.querySelectorAll('.alert.alert-danger');
+            warnings.forEach(function(warning) {
+                if (warning.textContent.includes('No saved addresses found')) {
+                    warning.style.display = 'none';
+                }
+            });
+        }
+    };
+</script>
+
+<section class="address-management-section">
+    <div class="container">
+        <div class="address-header">
+            <h1>Manage Delivery Addresses</h1>
+            <p>Add, edit or remove your delivery addresses</p>
+        </div>
+
+        <div class="address-content">
+            <div class="address-actions">
+                <button type="button" id="addNewAddressBtn" class="btn-primary">
+                    <i class="fas fa-plus-circle"></i> Add New Address
+                </button>
+            </div>
+
+            @if (TempData["AddressMessage"] != null)
+            {
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> @TempData["AddressMessage"]
+                </div>
+            }
+
+            @if (TempData["AddressSuccess"] != null)
+            {
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle"></i> @TempData["AddressSuccess"]
+                </div>
+            }
+
+            @if (TempData["AddressError"] != null)
+            {
+                <div class="alert alert-danger" id="addressErrorAlert">
+                    <i class="fas fa-exclamation-circle"></i> @TempData["AddressError"]
+                </div>
+            }
+
+            <!-- Add a warning if no addresses are found -->
+            @if (Model == null || !Model.Any())
+            {
+                <div class="alert alert-danger" id="noAddressesAlert" style="font-weight: bold; font-size: 1.1em; padding: 15px;">
+                    <i class="fas fa-exclamation-circle"></i> No saved addresses found. Please add an address before proceeding to checkout.
+                </div>
+            }
+
+
+
+            <div class="addresses-container">
+                @if (Model != null && Model.Any())
+                {
+                    <!-- We have addresses, so hide the no addresses warning -->
+                    <script>
+                        // Execute immediately without waiting for DOMContentLoaded
+                        (function() {
+                            // Hide all warning messages about no addresses
+                            var warnings = document.querySelectorAll('.alert.alert-danger');
+                            warnings.forEach(function(warning) {
+                                if (warning.textContent.includes('No saved addresses found')) {
+                                    warning.style.display = 'none';
+                                }
+                            });
+                        })();
+                    </script>
+
+                    <div class="addresses-grid">
+                        @foreach (var address in Model)
+                        {
+                            <div class="address-card @(address.IsDefault ? "default" : "")">
+                                <div class="address-card-header">
+                                    <h3>@address.Name</h3>
+                                    @if (address.IsDefault)
+                                    {
+                                        <span class="default-badge">Default</span>
+                                    }
+                                </div>
+                                <div class="address-card-body">
+                                    <p><strong>@address.CustomerName</strong></p>
+                                    <p>@address.DeliveryAddress</p>
+                                    <p>@address.City, @address.State @address.PostalCode</p>
+                                    <p>@address.CustomerPhone</p>
+                                </div>
+                                <div class="address-card-actions">
+                                    <button type="button" class="btn-edit" data-id="@address.Id">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                    <button type="button" class="btn-delete" data-id="@address.Id">
+                                        <i class="fas fa-trash-alt"></i> Delete
+                                    </button>
+                                    @if (!address.IsDefault)
+                                    {
+                                        <button type="button" class="btn-set-default" data-id="@address.Id">
+                                            <i class="fas fa-check-circle"></i> Set as Default
+                                        </button>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="no-addresses">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <h3>No Saved Addresses</h3>
+                        <p>You haven't saved any delivery addresses yet. Add a new address to get started.</p>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="checkout-navigation">
+            <a href="/Menu" class="btn-secondary">Back to Menu</a>
+            <a href="/Checkout" class="btn-primary" id="goToCheckoutBtn">Go to Checkout</a>
+        </div>
+
+        <div id="debugResult" style="margin-top: 20px; padding: 10px; background-color: #f8f9fa; border: 1px solid #ddd; display: none;">
+            <h3>Debug Information</h3>
+            <pre id="debugOutput"></pre>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Add new address button
+            $('#addNewAddressBtn').on('click', function() {
+                showAddressModal();
+            });
+
+            // Edit address buttons
+            $('.btn-edit').on('click', function() {
+                const addressId = $(this).data('id');
+                showEditAddressModal(addressId);
+            });
+
+            // Delete address buttons
+            $('.btn-delete').on('click', function() {
+                const addressId = $(this).data('id');
+                if (confirm('Are you sure you want to delete this address?')) {
+                    deleteAddress(addressId);
+                }
+            });
+
+            // Set as default buttons
+            $('.btn-set-default').on('click', function() {
+                const addressId = $(this).data('id');
+                setDefaultAddress(addressId);
+            });
+
+            // Continue to Checkout button
+            $('#continueToCheckoutBtn, #goToCheckoutBtn').on('click', function(e) {
+                // Check if there are any addresses
+                if ($('.address-card').length === 0) {
+                    e.preventDefault();
+                    alert('Please add at least one delivery address before proceeding to checkout.');
+                    return false;
+                }
+
+                // Proceed to checkout
+                try {
+                    window.location.href = '/Checkout';
+                } catch (error) {
+                    console.error('Error navigating to checkout:', error);
+                    alert('There was an error proceeding to checkout. Please try again.');
+                }
+            });
+
+            // Debug button
+            $('#debugBtn').on('click', function() {
+                // Call the debug endpoint
+                $.ajax({
+                    url: '/Checkout/Debug',
+                    type: 'GET',
+                    success: function(response) {
+                        // Format the JSON response
+                        const formattedJson = JSON.stringify(response, null, 2);
+
+                        // Display the debug information
+                        $('#debugOutput').text(formattedJson);
+                        $('#debugResult').show();
+                    },
+                    error: function(xhr) {
+                        $('#debugOutput').text('Error: ' + xhr.status + ' ' + xhr.statusText);
+                        $('#debugResult').show();
+                    }
+                });
+            });
+
+
+
+            // Function to show add address modal
+            function showAddressModal() {
+                // Create modal HTML
+                const modalHtml = `
+                    <div class="address-modal" id="addressModal">
+                        <div class="address-modal-content">
+                            <div class="address-modal-header">
+                                <h2>Add New Address</h2>
+                                <button type="button" class="close-modal">&times;</button>
+                            </div>
+                            <div class="address-modal-body">
+                                <form id="addressForm">
+                                    <div class="form-group">
+                                        <label for="addressName">Address Name</label>
+                                        <input type="text" id="addressName" class="form-control" placeholder="Home, Work, etc." required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="customerName">Full Name</label>
+                                        <input type="text" id="customerName" class="form-control" placeholder="Your full name" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="customerPhone">Phone Number</label>
+                                        <input type="tel" id="customerPhone" class="form-control" placeholder="Your phone number" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="deliveryAddress">Address</label>
+                                        <input type="text" id="deliveryAddress" class="form-control" placeholder="Street address" required>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-4">
+                                            <label for="city">City</label>
+                                            <input type="text" id="city" class="form-control" placeholder="City" required>
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label for="state">State</label>
+                                            <input type="text" id="state" class="form-control" placeholder="State" required>
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label for="postalCode">Postal Code</label>
+                                            <input type="text" id="postalCode" class="form-control" placeholder="Postal code" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" id="isDefault" class="custom-control-input">
+                                            <label for="isDefault" class="custom-control-label">Set as default address</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-actions">
+                                        <button type="button" class="btn-secondary" id="cancelAddress">Cancel</button>
+                                        <button type="submit" class="btn-primary">Save Address</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Add modal to DOM
+                $('body').append(modalHtml);
+
+                // Show modal
+                $('#addressModal').addClass('active').fadeIn(300);
+
+                // Close modal on X button click
+                $('.close-modal, #cancelAddress').on('click', function() {
+                    $('#addressModal').removeClass('active').fadeOut(300, function() {
+                        $(this).remove();
+                    });
+                });
+
+                // Handle form submission
+                $('#addressForm').on('submit', function(e) {
+                    e.preventDefault();
+
+                    // Get form data
+                    const addressData = {
+                        name: $('#addressName').val(),
+                        customerName: $('#customerName').val(),
+                        customerPhone: $('#customerPhone').val(),
+                        deliveryAddress: $('#deliveryAddress').val(),
+                        city: $('#city').val(),
+                        state: $('#state').val(),
+                        postalCode: $('#postalCode').val(),
+                        isDefault: $('#isDefault').is(':checked')
+                    };
+
+                    // Submit data to server
+                    $.ajax({
+                        url: '/api/SavedAddress/FromForm',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            addressName: addressData.name,
+                            customerName: addressData.customerName,
+                            customerPhone: addressData.customerPhone,
+                            deliveryAddress: addressData.deliveryAddress,
+                            city: addressData.city,
+                            state: addressData.state,
+                            postalCode: addressData.postalCode,
+                            isDefault: addressData.isDefault
+                        }),
+                        success: function(response) {
+                            // Close modal
+                            $('#addressModal').removeClass('active').fadeOut(300, function() {
+                                $(this).remove();
+                            });
+
+                            // Reload page to show new address
+                            window.location.reload();
+                        },
+                        error: function(xhr) {
+                            let errorMessage = 'Failed to save address. Please try again.';
+                            if (xhr.responseJSON && xhr.responseJSON.message) {
+                                errorMessage = xhr.responseJSON.message;
+                            }
+                            alert(errorMessage);
+                        }
+                    });
+                });
+            }
+
+            // Function to show edit address modal
+            function showEditAddressModal(addressId) {
+                // Fetch address data
+                $.ajax({
+                    url: `/api/SavedAddress/${addressId}`,
+                    type: 'GET',
+                    success: function(address) {
+                        // Create modal HTML with pre-filled data
+                        const modalHtml = `
+                            <div class="address-modal" id="addressModal">
+                                <div class="address-modal-content">
+                                    <div class="address-modal-header">
+                                        <h2>Edit Address</h2>
+                                        <button type="button" class="close-modal">&times;</button>
+                                    </div>
+                                    <div class="address-modal-body">
+                                        <form id="editAddressForm">
+                                            <input type="hidden" id="addressId" value="${address.id}">
+                                            <div class="form-group">
+                                                <label for="addressName">Address Name</label>
+                                                <input type="text" id="addressName" class="form-control" value="${address.name}" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="customerName">Full Name</label>
+                                                <input type="text" id="customerName" class="form-control" value="${address.customerName}" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="customerPhone">Phone Number</label>
+                                                <input type="tel" id="customerPhone" class="form-control" value="${address.customerPhone}" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="deliveryAddress">Address</label>
+                                                <input type="text" id="deliveryAddress" class="form-control" value="${address.deliveryAddress}" required>
+                                            </div>
+                                            <div class="form-row">
+                                                <div class="form-group col-md-4">
+                                                    <label for="city">City</label>
+                                                    <input type="text" id="city" class="form-control" value="${address.city}" required>
+                                                </div>
+                                                <div class="form-group col-md-4">
+                                                    <label for="state">State</label>
+                                                    <input type="text" id="state" class="form-control" value="${address.state}" required>
+                                                </div>
+                                                <div class="form-group col-md-4">
+                                                    <label for="postalCode">Postal Code</label>
+                                                    <input type="text" id="postalCode" class="form-control" value="${address.postalCode}" required>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" id="isDefault" class="custom-control-input" ${address.isDefault ? 'checked' : ''}>
+                                                    <label for="isDefault" class="custom-control-label">Set as default address</label>
+                                                </div>
+                                            </div>
+                                            <div class="form-actions">
+                                                <button type="button" class="btn-secondary" id="cancelAddress">Cancel</button>
+                                                <button type="submit" class="btn-primary">Update Address</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+
+                        // Add modal to DOM
+                        $('body').append(modalHtml);
+
+                        // Show modal
+                        $('#addressModal').addClass('active').fadeIn(300);
+
+                        // Close modal on X button click
+                        $('.close-modal, #cancelAddress').on('click', function() {
+                            $('#addressModal').removeClass('active').fadeOut(300, function() {
+                                $(this).remove();
+                            });
+                        });
+
+                        // Handle form submission
+                        $('#editAddressForm').on('submit', function(e) {
+                            e.preventDefault();
+
+                            // Get form data
+                            const addressData = {
+                                id: parseInt($('#addressId').val()),
+                                name: $('#addressName').val(),
+                                customerName: $('#customerName').val(),
+                                customerPhone: $('#customerPhone').val(),
+                                deliveryAddress: $('#deliveryAddress').val(),
+                                city: $('#city').val(),
+                                state: $('#state').val(),
+                                postalCode: $('#postalCode').val(),
+                                isDefault: $('#isDefault').is(':checked')
+                            };
+
+                            // Submit data to server
+                            $.ajax({
+                                url: `/api/SavedAddress/${addressData.id}`,
+                                type: 'PUT',
+                                contentType: 'application/json',
+                                data: JSON.stringify(addressData),
+                                success: function(response) {
+                                    // Close modal
+                                    $('#addressModal').removeClass('active').fadeOut(300, function() {
+                                        $(this).remove();
+                                    });
+
+                                    // Reload page to show updated address
+                                    window.location.reload();
+                                },
+                                error: function(xhr) {
+                                    let errorMessage = 'Failed to update address. Please try again.';
+                                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                                        errorMessage = xhr.responseJSON.message;
+                                    }
+                                    alert(errorMessage);
+                                }
+                            });
+                        });
+                    },
+                    error: function() {
+                        alert('Failed to load address details. Please try again.');
+                    }
+                });
+            }
+
+            // Function to delete address
+            function deleteAddress(addressId) {
+                $.ajax({
+                    url: `/api/SavedAddress/${addressId}`,
+                    type: 'DELETE',
+                    success: function() {
+                        // Reload page to update address list
+                        window.location.reload();
+                    },
+                    error: function() {
+                        alert('Failed to delete address. Please try again.');
+                    }
+                });
+            }
+
+            // Function to set default address
+            function setDefaultAddress(addressId) {
+                $.ajax({
+                    url: `/api/SavedAddress/${addressId}/SetDefault`,
+                    type: 'POST',
+                    success: function() {
+                        // Reload page to update address list
+                        window.location.reload();
+                    },
+                    error: function() {
+                        alert('Failed to set default address. Please try again.');
+                    }
+                });
+            }
+
+            // Add a jQuery click handler for the checkout link as a backup
+            $('#checkoutLink, #goToCheckoutBtn').on('click', function(e) {
+                console.log('Checkout link clicked via jQuery');
+                // Check if there are any addresses
+                if ($('.address-card').length === 0) {
+                    e.preventDefault();
+                    alert('Please add at least one delivery address before proceeding to checkout.');
+                    return false;
+                }
+                // Let the default link behavior work
+            });
+
+            // Add a direct navigation function
+            function goToCheckout() {
+                console.log('Navigating to checkout directly');
+                // Check if there are any addresses
+                if ($('.address-card').length === 0) {
+                    alert('Please add at least one delivery address before proceeding to checkout.');
+                    return;
+                }
+                window.location.href = '/Checkout';
+            }
+
+            // Handle Debug button
+            $('#debugBtn').on('click', function() {
+                $.ajax({
+                    url: '/Checkout/Debug',
+                    type: 'GET',
+                    success: function(data) {
+                        $('#debugOutput').text(JSON.stringify(data, null, 2));
+                        $('#debugResult').show();
+                    },
+                    error: function() {
+                        alert('Failed to load debug information.');
+                    }
+                });
+            });
+
+            // Check if we have address cards and hide the warning if we do
+            if ($('.address-card').length > 0) {
+                $('.alert.alert-danger').each(function() {
+                    if ($(this).text().includes('No saved addresses found')) {
+                        $(this).hide();
+                    }
+                });
+            }
+        });
+    </script>
+}

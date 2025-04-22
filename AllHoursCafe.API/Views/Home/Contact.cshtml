@@ -1,0 +1,120 @@
+@model AllHoursCafe.API.Models.Contact
+@{
+    ViewData["Title"] = "Contact Us";
+}
+
+<section class="contact-section">
+    <div class="container">
+        <h2 class="section-title animate-on-scroll" data-animation="fade-down">Contact Us</h2>
+        <div class="contact-content">
+            <div class="contact-info animate-on-scroll" data-animation="fade-right" data-delay="200">
+                <h3>Get in Touch</h3>
+                <p>We'd love to hear from you! Whether you have a question about our menu, want to make a reservation, or just want to say hello, feel free to reach out.</p>
+
+                <div class="contact-details">
+                    <div class="contact-item animate-on-scroll" data-animation="fade-up" data-delay="300">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h4>Location</h4>
+                            <p>123 Cafe Street<br>Foodie District<br>Your City, ST 12345</p>
+                        </div>
+                    </div>
+
+                    <div class="contact-item animate-on-scroll" data-animation="fade-up" data-delay="400">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <h4>Phone</h4>
+                            <p>(123) 456-7890</p>
+                        </div>
+                    </div>
+
+                    <div class="contact-item animate-on-scroll" data-animation="fade-up" data-delay="500">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h4>Email</h4>
+                            <p>info@allhourscafe.com</p>
+                        </div>
+                    </div>
+
+                    <div class="contact-item animate-on-scroll" data-animation="fade-up" data-delay="600">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <h4>Hours</h4>
+                            <p>Open 24/7<br>365 days a year</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-form animate-on-scroll" data-animation="fade-left" data-delay="200">
+                <h3>Send us a Message</h3>
+
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success">
+                        @TempData["SuccessMessage"]
+                    </div>
+                }
+
+                <form id="contactForm" asp-action="Contact" asp-controller="Home" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="form-group animate-on-scroll" data-animation="fade-up" data-delay="300">
+                        <label asp-for="Name">Name</label>
+                        <input asp-for="Name" class="form-control" required />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group animate-on-scroll" data-animation="fade-up" data-delay="400">
+                        <label asp-for="Email">Email</label>
+                        <input asp-for="Email" class="form-control" required />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group animate-on-scroll" data-animation="fade-up" data-delay="500">
+                        <label asp-for="Subject">Subject</label>
+                        <input asp-for="Subject" class="form-control" required />
+                        <span asp-validation-for="Subject" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group animate-on-scroll" data-animation="fade-up" data-delay="600">
+                        <label asp-for="Message">Message</label>
+                        <textarea asp-for="Message" class="form-control" rows="5" required></textarea>
+                        <span asp-validation-for="Message" class="text-danger"></span>
+                    </div>
+
+                    <button type="submit" class="btn-primary animate-on-scroll" data-animation="fade-up" data-delay="700">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const animateElements = document.querySelectorAll('.animate-on-scroll');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const element = entry.target;
+                        const delay = element.getAttribute('data-delay') || 0;
+
+                        setTimeout(() => {
+                            element.classList.add('animated');
+                        }, delay);
+
+                        observer.unobserve(element);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            animateElements.forEach(element => {
+                observer.observe(element);
+            });
+        });
+
+        // Form validation is now handled by ASP.NET Core
+    </script>
+}

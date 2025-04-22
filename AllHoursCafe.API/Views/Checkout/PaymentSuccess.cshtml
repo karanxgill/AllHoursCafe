@@ -1,0 +1,199 @@
+@model AllHoursCafe.API.Models.Order
+
+@{
+    ViewData["Title"] = "Order Confirmation";
+}
+
+<link rel="stylesheet" href="/css/order-confirmation.css">
+
+<div class="container mt-5 mb-5">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle mr-2"></i> @TempData["SuccessMessage"]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card order-confirmation-card">
+                <div class="card-header bg-success text-white">
+                    <div class="d-flex align-items-center">
+                        <div class="success-icon-container mr-3">
+                            <i class="fas fa-check-circle success-icon"></i>
+                        </div>
+                        <div>
+                            <h2 class="mb-0">Order Confirmed!</h2>
+                            <p class="mb-0">Thank you for your order</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div class="confirmation-message text-center mb-4">
+                        <h3>Your order has been received and confirmed</h3>
+                        <p class="lead">We're preparing your delicious food right now!</p>
+                        <div class="order-number">
+                            <span>Order #</span>
+                            <strong>@Model.Id</strong>
+                        </div>
+                        <p class="text-muted">A confirmation email has been sent to @Model.CustomerEmail</p>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="order-items-section">
+                                <h4>
+                                    <i class="fas fa-utensils mr-2"></i> Order Items
+                                </h4>
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th>Item</th>
+                                                <th class="text-center">Quantity</th>
+                                                <th class="text-right">Price</th>
+                                                <th class="text-right">Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in Model.OrderItems)
+                                            {
+                                                <tr>
+                                                    <td>@item.Name</td>
+                                                    <td class="text-center">@item.Quantity</td>
+                                                    <td class="text-right">₹@item.Price.ToString("F2")</td>
+                                                    <td class="text-right">₹@item.Total.ToString("F2")</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan="3" class="text-right"><strong>Subtotal:</strong></td>
+                                                <td class="text-right">₹@Model.SubTotal.ToString("F2")</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3" class="text-right"><strong>Tax (5%):</strong></td>
+                                                <td class="text-right">₹@Model.Tax.ToString("F2")</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3" class="text-right"><strong>Delivery Fee:</strong></td>
+                                                <td class="text-right">₹@Model.DeliveryFee.ToString("F2")</td>
+                                            </tr>
+                                            <tr class="total-row">
+                                                <td colspan="3" class="text-right"><strong>Total:</strong></td>
+                                                <td class="text-right"><strong>₹@Model.Total.ToString("F2")</strong></td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="order-info-section">
+                                <div class="order-info-card mb-3">
+                                    <h5><i class="fas fa-info-circle mr-2"></i> Order Information</h5>
+                                    <div class="info-item">
+                                        <span class="info-label">Order Number:</span>
+                                        <span class="info-value">#@Model.Id</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">Order Date:</span>
+                                        <span class="info-value">@Model.OrderDate.ToString("MMM dd, yyyy hh:mm tt")</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">Order Status:</span>
+                                        <span class="info-value status-confirmed">@Model.OrderStatus</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">Payment Method:</span>
+                                        <span class="info-value">@Model.PaymentMethod</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">Payment Status:</span>
+                                        <span class="info-value status-completed">@Model.PaymentStatus</span>
+                                    </div>
+                                </div>
+
+                                <div class="order-info-card mb-3">
+                                    <h5><i class="fas fa-user mr-2"></i> Customer Information</h5>
+                                    <div class="info-item">
+                                        <span class="info-label">Name:</span>
+                                        <span class="info-value">@Model.CustomerName</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">Email:</span>
+                                        <span class="info-value">@Model.CustomerEmail</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">Phone:</span>
+                                        <span class="info-value">@Model.CustomerPhone</span>
+                                    </div>
+                                </div>
+
+                                <div class="order-info-card">
+                                    <h5><i class="fas fa-map-marker-alt mr-2"></i> Delivery Information</h5>
+                                    <div class="info-item">
+                                        <span class="info-label">Address:</span>
+                                        <span class="info-value">@Model.DeliveryAddress</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">City:</span>
+                                        <span class="info-value">@Model.City</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">State:</span>
+                                        <span class="info-value">@Model.State</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">Postal Code:</span>
+                                        <span class="info-value">@Model.PostalCode</span>
+                                    </div>
+                                    @if (!string.IsNullOrEmpty(Model.SpecialInstructions))
+                                    {
+                                        <div class="info-item">
+                                            <span class="info-label">Instructions:</span>
+                                            <span class="info-value">@Model.SpecialInstructions</span>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <a href="/" class="btn btn-primary btn-lg">
+                            <i class="fas fa-home mr-2"></i> Return to Home
+                        </a>
+                        <a href="/Menu" class="btn btn-secondary btn-lg ml-2">
+                            <i class="fas fa-utensils mr-2"></i> Order More
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Animate the success icon
+            $('.success-icon').addClass('animate-success');
+
+            // Fade in the order items one by one
+            $('.order-items-section tbody tr').each(function(index) {
+                $(this).delay(100 * index).animate({ opacity: 1 }, 500);
+            });
+
+            // Highlight the total row
+            setTimeout(function() {
+                $('.total-row').addClass('highlight');
+            }, 1000);
+        });
+    </script>
+}
