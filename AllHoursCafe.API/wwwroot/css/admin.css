@@ -1,7 +1,7 @@
 /* Admin Dashboard Styles */
 
 :root {
-    --primary-color: #4a3c31;
+    --primary-color: #571017; /* Updated to match admin navbar color */
     --secondary-color: #8b7355;
     --accent-color: #d4b996;
     --text-color: #333;

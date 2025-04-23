@@ -27,10 +27,24 @@ function initializeDropdowns() {
         // Initial setup based on screen size
         handleResponsiveNavbar();
 
-        // Add click handler for mobile navbar toggler
+        // Bootstrap 5 handles the navbar toggler automatically via data-bs-toggle
+        // Add additional functionality if needed
         $('.navbar-toggler').on('click', function() {
             console.log('Navbar toggler clicked');
+            // Additional custom behavior can be added here
         });
+
+        // Fix for Bootstrap 5 navbar collapse
+        var navbarCollapse = document.getElementById('navbarNav');
+        if (navbarCollapse) {
+            navbarCollapse.addEventListener('show.bs.collapse', function () {
+                console.log('Navbar collapsing');
+            });
+
+            navbarCollapse.addEventListener('shown.bs.collapse', function () {
+                console.log('Navbar collapsed');
+            });
+        }
     } else {
         console.warn('jQuery or Bootstrap dropdown plugin not loaded');
     }
@@ -38,7 +52,7 @@ function initializeDropdowns() {
 
 // Handle responsive navbar behavior based on screen size
 function handleResponsiveNavbar() {
-    if (window.innerWidth >= 992) {
+    if (window.innerWidth >= 1200) {
         // Desktop behavior: hover dropdowns
         setupDesktopNavbar();
     } else {
