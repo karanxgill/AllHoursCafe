@@ -20,7 +20,8 @@ All Hours Cafe is a full-featured restaurant website built with ASP.NET Core MVC
 - **User Management**: View user details and manage roles
 - **Reservation Management**: View and manage table reservations
 - **Contact Form Submissions**: View and respond to customer inquiries
-- **Role-based Authorization**: Secure access to admin features
+- **Role-based Authorization**: Hierarchical access control with SuperAdmin, Admin, and User roles
+- **SuperAdmin Privileges**: Special permissions for managing other admins and system configuration
 
 ## Project Structure
 - **Models**: Database entities and view models
@@ -83,13 +84,36 @@ All Hours Cafe is a full-featured restaurant website built with ASP.NET Core MVC
    ```
 6. Run the application (F5 or Ctrl+F5)
 
-## Admin Access
-When you run the application for the first time and apply database migrations, an admin account is automatically created with the following credentials:
+## SuperAdmin Access
+When you run the application for the first time and apply database migrations, a SuperAdmin account is automatically created with the following credentials:
 
-- **Email**: admin@allhourscafe.com
-- **Password**: Admin@123
+- **Email**: superadmin@allhourscafe.com
+- **Password**: SuperAdmin@123
 
-These credentials can be used to access the admin dashboard. For security reasons, it's recommended to change the default password after your first login.
+These credentials can be used to access the admin dashboard with full administrative privileges. For security reasons, it's **strongly recommended** to change the default password immediately after your first login.
+
+## Role Hierarchy
+
+The application implements a hierarchical role system with three levels:
+
+### SuperAdmin
+- Highest level with full administrative privileges
+- Can create, edit, and delete all content
+- Can create and manage other SuperAdmins and regular Admins
+- Can disable any user account, including other SuperAdmin accounts
+- Has exclusive access to the role management functionality
+
+### Admin
+- Created only by SuperAdmins
+- Can manage content (menu items, categories, orders, etc.)
+- Cannot create or manage other Admins
+- Cannot disable SuperAdmin accounts
+- Cannot access role management functionality
+
+### User
+- Regular customers who register through the signup process
+- Can place orders, make reservations, and manage their profile
+- No administrative access
 
 ## Key Pages
 
