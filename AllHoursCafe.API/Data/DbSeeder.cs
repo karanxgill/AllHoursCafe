@@ -37,6 +37,14 @@ namespace AllHoursCafe.API.Data
                     _logger.LogInformation("Menu items seeded successfully.");
                 }
 
+                // Seed menu highlights if none exist
+                if (!await _context.MenuHighlights.AnyAsync())
+                {
+                    _logger.LogInformation("Seeding menu highlights to database...");
+                    await SeedMenuHighlightsAsync();
+                    _logger.LogInformation("Menu highlights seeded successfully.");
+                }
+
                 // Always check for a SuperAdmin user and create one if it doesn't exist
                 if (!await _context.Users.AnyAsync(u => u.Role == "SuperAdmin"))
                 {
@@ -427,6 +435,120 @@ namespace AllHoursCafe.API.Data
 
             // Save changes to the database
             await _context.SaveChangesAsync();
+        }
+
+        private async Task SeedMenuHighlightsAsync()
+        {
+            try
+            {
+                // Get menu items for highlights
+                var avocadoToast = await _context.MenuItems.FirstOrDefaultAsync(m => m.Name == "Avocado Toast");
+                var breakfastBurrito = await _context.MenuItems.FirstOrDefaultAsync(m => m.Name == "Breakfast Burrito");
+                var classicPancakes = await _context.MenuItems.FirstOrDefaultAsync(m => m.Name == "Classic Pancakes");
+                var freshCoffee = await _context.MenuItems.FirstOrDefaultAsync(m => m.Name == "Fresh Brewed Coffee");
+                var chocolateBrownie = await _context.MenuItems.FirstOrDefaultAsync(m => m.Name == "Chocolate Brownie");
+                var cheesecake = await _context.MenuItems.FirstOrDefaultAsync(m => m.Name == "New York Cheesecake");
+
+                // Create list to hold highlights
+                var highlights = new List<MenuHighlight>();
+
+                // Add breakfast highlights
+                if (avocadoToast != null)
+                {
+                    highlights.Add(new MenuHighlight
+                    {
+                        MenuItemId = avocadoToast.Id,
+                        Section = "Breakfast",
+                        DisplayOrder = 1,
+                        CustomTitle = "Avocado Toast",
+                        CustomDescription = "Fresh avocado on artisanal bread",
+                        IsActive = true
+                    });
+                }
+
+                if (breakfastBurrito != null)
+                {
+                    highlights.Add(new MenuHighlight
+                    {
+                        MenuItemId = breakfastBurrito.Id,
+                        Section = "Breakfast",
+                        DisplayOrder = 2,
+                        CustomTitle = "Breakfast Burrito",
+                        CustomDescription = "Eggs, cheese, and fresh vegetables",
+                        IsActive = true
+                    });
+                }
+
+                if (classicPancakes != null)
+                {
+                    highlights.Add(new MenuHighlight
+                    {
+                        MenuItemId = classicPancakes.Id,
+                        Section = "Breakfast",
+                        DisplayOrder = 3,
+                        CustomTitle = "Fluffy Pancakes",
+                        CustomDescription = "Served with maple syrup and butter",
+                        IsActive = true
+                    });
+                }
+
+                // Add beverage highlights
+                if (freshCoffee != null)
+                {
+                    highlights.Add(new MenuHighlight
+                    {
+                        MenuItemId = freshCoffee.Id,
+                        Section = "Beverages",
+                        DisplayOrder = 1,
+                        CustomTitle = "Fresh Coffee",
+                        CustomDescription = "Premium roasted coffee",
+                        IsActive = true
+                    });
+                }
+
+                // Add dessert highlights
+                if (chocolateBrownie != null)
+                {
+                    highlights.Add(new MenuHighlight
+                    {
+                        MenuItemId = chocolateBrownie.Id,
+                        Section = "Desserts",
+                        DisplayOrder = 1,
+                        CustomTitle = "Chocolate Brownie",
+                        CustomDescription = "Rich chocolate brownie with ice cream",
+                        IsActive = true
+                    });
+                }
+
+                if (cheesecake != null)
+                {
+                    highlights.Add(new MenuHighlight
+                    {
+                        MenuItemId = cheesecake.Id,
+                        Section = "Desserts",
+                        DisplayOrder = 2,
+                        CustomTitle = "New York Cheesecake",
+                        CustomDescription = "Classic cheesecake with berry compote",
+                        IsActive = true
+                    });
+                }
+
+                // Add highlights to database
+                if (highlights.Any())
+                {
+                    await _context.MenuHighlights.AddRangeAsync(highlights);
+                    await _context.SaveChangesAsync();
+                    _logger.LogInformation("Added {Count} menu highlights to the database", highlights.Count);
+                }
+                else
+                {
+                    _logger.LogWarning("No menu items found to create highlights");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error seeding menu highlights");
+            }
         }
 
         private async Task SeedSuperAdminUserAsync()

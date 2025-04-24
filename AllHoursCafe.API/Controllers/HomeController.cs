@@ -18,9 +18,33 @@ namespace AllHoursCafe.API.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            try
+            {
+                // Get menu highlights from the database
+                var highlights = await _context.MenuHighlights
+                    .Include(h => h.MenuItem)
+                    .ThenInclude(m => m.Category)
+                    .Where(h => h.IsActive && h.MenuItem.IsActive)
+                    .OrderBy(h => h.Section)
+                    .ThenBy(h => h.DisplayOrder)
+                    .ToListAsync();
+
+                // Group highlights by section
+                var highlightsBySection = highlights
+                    .GroupBy(h => h.Section)
+                    .ToDictionary(g => g.Key, g => g.ToList());
+
+                // Pass the grouped highlights to the view
+                return View(highlightsBySection);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading home page menu highlights");
+                // If there's an error, just return the view without highlights
+                return View(new Dictionary<string, List<MenuHighlight>>());
+            }
         }
 
         public IActionResult About()

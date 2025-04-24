@@ -52,7 +52,7 @@ function initializeDropdowns() {
 
 // Handle responsive navbar behavior based on screen size
 function handleResponsiveNavbar() {
-    if (window.innerWidth >= 1200) {
+    if (window.innerWidth >= 1199) {
         // Desktop behavior: hover dropdowns
         setupDesktopNavbar();
     } else {

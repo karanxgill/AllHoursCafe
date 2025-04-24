@@ -18,6 +18,7 @@ namespace AllHoursCafe.API.Data
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Contact> Contacts { get; set; }
         public DbSet<SavedAddress> SavedAddresses { get; set; }
+        public DbSet<MenuHighlight> MenuHighlights { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

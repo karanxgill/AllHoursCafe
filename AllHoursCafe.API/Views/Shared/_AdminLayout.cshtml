@@ -15,6 +15,9 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gabriela&display=swap" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <link rel="stylesheet" href="~/css/auto-logout.css?v=@DateTime.Now.Ticks" />
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
     <header>
@@ -44,6 +47,11 @@
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Admin" asp-action="Categories">
                                     <i class="fas fa-th-list nav-icon"></i> Categories
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="AdminMenuHighlights" asp-action="Index">
+                                    <i class="fas fa-star nav-icon"></i> Menu Highlights
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -112,6 +120,8 @@
 
     <!-- Load jQuery and Bootstrap only once -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Select2 JS (after jQuery) -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Admin scripts -->

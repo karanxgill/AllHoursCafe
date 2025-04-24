@@ -1,0 +1,254 @@
+@model AllHoursCafe.API.Models.MenuHighlight
+@{
+    ViewData["Title"] = "Create Menu Highlight";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var menuItems = ViewBag.MenuItems as IEnumerable<AllHoursCafe.API.Models.MenuItem> ?? new List<AllHoursCafe.API.Models.MenuItem>();
+}
+
+<div class="admin-content-container">
+    <div class="admin-header">
+        <h1>Create Menu Highlight</h1>
+        <p>Add a new menu item to the home page highlights section.</p>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2>New Menu Highlight</h2>
+        </div>
+        <div class="card-body">
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="alert alert-danger">
+                    <strong>Validation failed!</strong>
+                    <ul>
+                        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                        {
+                            <li>@error.ErrorMessage</li>
+                        }
+                    </ul>
+                </div>
+            }
+            <form asp-action="Create" method="post" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="MenuItemId" class="control-label">Menu Item *</label>
+                    <select asp-for="MenuItemId" class="form-control" required>
+                        <option value="">-- Select Menu Item --</option>
+                        @foreach (var category in menuItems.GroupBy(m => m.Category?.Name))
+                        {
+                            <optgroup label="@(category.Key ?? "Uncategorized")">
+                                @foreach (var item in category)
+                                {
+                                    <option value="@item.Id">@item.Name</option>
+                                }
+                            </optgroup>
+                        }
+                    </select>
+                    <span asp-validation-for="MenuItemId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Section" class="control-label">Section *</label>
+                    <select asp-for="Section" class="form-control" required>
+                        <option value="Breakfast">Breakfast</option>
+                        <option value="Lunch">Lunch</option>
+                        <option value="Dinner">Dinner</option>
+                        <option value="Beverages">Beverages</option>
+                        <option value="Desserts">Desserts</option>
+                        <option value="Snacks">Snacks</option>
+                    </select>
+                    <span asp-validation-for="Section" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="DisplayOrder" class="control-label">Display Order *</label>
+                    <input asp-for="DisplayOrder" class="form-control" type="number" min="1" max="100" required />
+                    <span asp-validation-for="DisplayOrder" class="text-danger"></span>
+                    <small class="form-text text-muted">Items with lower numbers will appear first within their section.</small>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="CustomTitle" class="control-label">Custom Title (Optional)</label>
+                    <input asp-for="CustomTitle" class="form-control" />
+                    <span asp-validation-for="CustomTitle" class="text-danger"></span>
+                    <small class="form-text text-muted">Leave blank to use the menu item's original name.</small>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="CustomDescription" class="control-label">Custom Description (Optional)</label>
+                    <textarea asp-for="CustomDescription" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="CustomDescription" class="text-danger"></span>
+                    <small class="form-text text-muted">Leave blank to use the menu item's original description.</small>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="CustomImageUrl" class="control-label">Custom Image URL (Optional)</label>
+                    <input asp-for="CustomImageUrl" class="form-control" />
+                    <span asp-validation-for="CustomImageUrl" class="text-danger"></span>
+                    <small class="form-text text-muted">Enter a URL or upload an image below. Leave blank to use the menu item's original image.</small>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="control-label">Upload Custom Image (Optional)</label>
+                    <input type="file" name="ImageFile" id="ImageFile" class="form-control" accept="image/*" />
+                    <div id="image-preview" class="mt-2">
+                        <!-- Image preview will be shown here -->
+                    </div>
+                </div>
+
+                <div class="form-group mb-3">
+                    <div class="form-check">
+                        <input asp-for="IsActive" class="form-check-input" />
+                        <label asp-for="IsActive" class="form-check-label">Active</label>
+                    </div>
+                    <small class="form-text text-muted">Inactive highlights will not be displayed on the home page.</small>
+                </div>
+
+                <div class="form-group form-actions">
+                    <button type="submit" class="btn btn-primary action-btn">
+                        <i class="fas fa-save"></i> Create
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary action-btn">
+                        <i class="fas fa-arrow-left"></i> Back to List
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        /* Responsive styles for Menu Highlight Create page */
+        .card {
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 20px;
+        }
+
+        .card-header h2 {
+            margin: 0;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* Form actions styling */
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            min-width: 120px;
+        }
+
+        /* Responsive adjustments */
+        @@media (max-width: 768px) {
+            .admin-content-container {
+                padding: 15px 10px;
+            }
+
+            .card-body {
+                padding: 15px;
+            }
+
+            .form-group {
+                margin-bottom: 1rem;
+            }
+
+            .form-actions {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .action-btn {
+                display: block;
+                width: 100%;
+                margin-bottom: 0;
+            }
+
+            /* Fix Select2 dropdown on mobile */
+            .select2-container {
+                width: 100% !important;
+            }
+
+            /* Improve image preview on mobile */
+            #image-preview img {
+                max-width: 100%;
+                height: auto;
+            }
+        }
+
+        /* Medium screens */
+        @@media (min-width: 769px) and (max-width: 992px) {
+            .admin-content-container {
+                padding: 20px;
+            }
+
+            .form-actions {
+                flex-direction: row;
+                justify-content: flex-start;
+            }
+
+            .action-btn {
+                margin-bottom: 0;
+                width: auto;
+            }
+        }
+    </style>
+}
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function () {
+            // Initialize select2 for better dropdown experience
+            $('select').select2({
+                theme: 'bootstrap4',
+            });
+
+            // Image preview functionality
+            $('#ImageFile').on('change', function() {
+                var file = this.files[0];
+                if (file) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        $('#image-preview').html('<img src="' + e.target.result + '" alt="Image preview" style="max-width: 200px; max-height: 200px;" class="img-thumbnail mt-2" />');
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Show/hide image URL field based on file upload
+            $('#ImageFile').on('change', function() {
+                if (this.files.length > 0) {
+                    $('#CustomImageUrl').attr('readonly', true);
+                } else {
+                    $('#CustomImageUrl').attr('readonly', false);
+                }
+            });
+
+            // Show/hide file upload based on image URL field
+            $('#CustomImageUrl').on('input', function() {
+                if ($(this).val().trim() !== '') {
+                    $('#ImageFile').attr('disabled', true);
+                } else {
+                    $('#ImageFile').attr('disabled', false);
+                }
+            });
+        });
+    </script>
+}

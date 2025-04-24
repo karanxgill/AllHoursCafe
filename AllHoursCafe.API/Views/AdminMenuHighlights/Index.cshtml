@@ -1,0 +1,196 @@
+@model IEnumerable<AllHoursCafe.API.Models.MenuHighlight>
+@{
+    ViewData["Title"] = "Menu Highlights";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="admin-content-container">
+    <div class="admin-header">
+        <h1>Menu Highlights Management</h1>
+        <p>Manage the menu items that appear on the home page in the "Our Menu Highlights" section.</p>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="admin-actions">
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Add New Highlight
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2>Current Menu Highlights</h2>
+        </div>
+        <div class="card-body">
+            @if (Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Section</th>
+                                <th>Order</th>
+                                <th>Menu Item</th>
+                                <th>Category</th>
+                                <th>Custom Title</th>
+                                <th>Custom Description</th>
+                                <th>Custom Image</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.Section</td>
+                                    <td>@item.DisplayOrder</td>
+                                    <td>@(item.MenuItem?.Name ?? "Unknown")</td>
+                                    <td>@(item.MenuItem?.Category?.Name ?? "Uncategorized")</td>
+                                    <td>@(string.IsNullOrEmpty(item.CustomTitle) ? "-" : item.CustomTitle)</td>
+                                    <td>@(string.IsNullOrEmpty(item.CustomDescription) ? "-" : item.CustomDescription)</td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(item.CustomImageUrl))
+                                        {
+                                            <img src="@item.CustomImageUrl" alt="Custom image" style="max-width: 50px; max-height: 50px;" class="img-thumbnail" />
+                                        }
+                                        else
+                                        {
+                                            <span>-</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (item.IsActive)
+                                        {
+                                            <span class="badge bg-success">Active</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">Inactive</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">
+                                                <i class="fas fa-trash"></i> Delete
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info">
+                    <p>No menu highlights have been added yet. Click the "Add New Highlight" button to create one.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        /* Responsive styles for Menu Highlight Index page */
+        .card {
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 20px;
+        }
+
+        .card-header h2 {
+            margin: 0;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .admin-actions {
+            margin-bottom: 20px;
+        }
+
+        /* Responsive adjustments */
+        @@media (max-width: 768px) {
+            .admin-content-container {
+                padding: 15px 10px;
+            }
+
+            .admin-header {
+                margin-bottom: 15px;
+            }
+
+            .admin-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .card-body {
+                padding: 15px;
+            }
+
+            .table-responsive {
+                border: 0;
+            }
+
+            .btn-group {
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .btn-group .btn {
+                margin-left: 0 !important;
+                border-radius: 4px !important;
+            }
+
+            /* Improve DataTables responsiveness */
+            .dataTables_wrapper .dataTables_length,
+            .dataTables_wrapper .dataTables_filter {
+                float: none;
+                text-align: left;
+                margin-bottom: 10px;
+            }
+
+            .dataTables_wrapper .dataTables_filter {
+                margin-top: 10px;
+            }
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Initialize DataTable with responsive features
+            $('.table').DataTable({
+                "order": [[0, "asc"], [1, "asc"]], // Sort by Section, then DisplayOrder
+                "pageLength": 25,
+                "responsive": true,
+                "autoWidth": false
+            });
+        });
+    </script>
+}

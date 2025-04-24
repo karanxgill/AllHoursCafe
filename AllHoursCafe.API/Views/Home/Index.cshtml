@@ -1,3 +1,4 @@
+@model Dictionary<string, List<AllHoursCafe.API.Models.MenuHighlight>>
 @{
     ViewData["Title"] = "Welcome";
 }
@@ -71,55 +72,82 @@
 
         <!-- Menu Categories -->
         <div class="menu-categories">
-            <!-- Breakfast Category -->
-            <div class="menu-category animate-on-scroll" data-animation="fade-up">
-                <h3>Breakfast</h3>
-                <div class="menu-items">
-                    <div class="menu-item">
-                        <a href="/Menu">
-                            <img src="~/images/items/breakfast/avocado-toast.jpg" alt="Avocado Toast">
-                            <div class="item-info">
-                                <h4>Avocado Toast</h4>
-                                <p>Fresh avocado on artisanal bread</p>
-                            </div>
-                        </a>
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var section in Model)
+                {
+                    <div class="menu-category animate-on-scroll" data-animation="fade-up">
+                        <h3>@(section.Key)</h3>
+                        <div class="menu-items">
+                            @foreach (var highlight in section.Value)
+                            {
+                                <div class="menu-item">
+                                    <a href="/Menu">
+                                        <img src="@(string.IsNullOrEmpty(highlight.CustomImageUrl) ? highlight.MenuItem.ImageUrl : highlight.CustomImageUrl)"
+                                             alt="@(string.IsNullOrEmpty(highlight.CustomTitle) ? highlight.MenuItem.Name : highlight.CustomTitle)">
+                                        <div class="item-info">
+                                            <h4>@(string.IsNullOrEmpty(highlight.CustomTitle) ? highlight.MenuItem.Name : highlight.CustomTitle)</h4>
+                                            <p>@(string.IsNullOrEmpty(highlight.CustomDescription) ? highlight.MenuItem.Description : highlight.CustomDescription)</p>
+                                        </div>
+                                    </a>
+                                </div>
+                            }
+                        </div>
                     </div>
-                    <div class="menu-item">
-                        <a href="/Menu">
-                            <img src="~/images/items/breakfast/breakfast-burrito.jpg" alt="Breakfast Burrito">
-                            <div class="item-info">
-                                <h4>Breakfast Burrito</h4>
-                                <p>Eggs, cheese, and fresh vegetables</p>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="menu-item">
-                        <a href="/Menu">
-                            <img src="~/images/items/breakfast/fluffy-pancake.jpg" alt="Pancakes">
-                            <div class="item-info">
-                                <h4>Fluffy Pancakes</h4>
-                                <p>Served with maple syrup and butter</p>
-                            </div>
-                        </a>
+                }
+            }
+            else
+            {
+                <!-- Default Breakfast Category -->
+                <div class="menu-category animate-on-scroll" data-animation="fade-up">
+                    <h3>Breakfast</h3>
+                    <div class="menu-items">
+                        <div class="menu-item">
+                            <a href="/Menu">
+                                <img src="~/images/items/breakfast/avocado-toast.jpg" alt="Avocado Toast">
+                                <div class="item-info">
+                                    <h4>Avocado Toast</h4>
+                                    <p>Fresh avocado on artisanal bread</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="menu-item">
+                            <a href="/Menu">
+                                <img src="~/images/items/breakfast/breakfast-burrito.jpg" alt="Breakfast Burrito">
+                                <div class="item-info">
+                                    <h4>Breakfast Burrito</h4>
+                                    <p>Eggs, cheese, and fresh vegetables</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="menu-item">
+                            <a href="/Menu">
+                                <img src="~/images/items/breakfast/fluffy-pancake.jpg" alt="Pancakes">
+                                <div class="item-info">
+                                    <h4>Fluffy Pancakes</h4>
+                                    <p>Served with maple syrup and butter</p>
+                                </div>
+                            </a>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Beverages Category -->
-            <div class="menu-category animate-on-scroll" data-animation="fade-up" data-delay="200">
-                <h3>Beverages</h3>
-                <div class="menu-items">
-                    <div class="menu-item fresh-coffee">
-                        <a href="/Menu">
-                            <img src="~/images/coffee.jpg" alt="Fresh Coffee">
-                            <div class="item-info">
-                                <h4>Fresh Coffee</h4>
-                                <p>Premium roasted coffee</p>
-                            </div>
-                        </a>
+                <!-- Default Beverages Category -->
+                <div class="menu-category animate-on-scroll" data-animation="fade-up" data-delay="200">
+                    <h3>Beverages</h3>
+                    <div class="menu-items">
+                        <div class="menu-item fresh-coffee">
+                            <a href="/Menu">
+                                <img src="~/images/coffee.jpg" alt="Fresh Coffee">
+                                <div class="item-info">
+                                    <h4>Fresh Coffee</h4>
+                                    <p>Premium roasted coffee</p>
+                                </div>
+                            </a>
+                        </div>
                     </div>
                 </div>
-            </div>
+            }
         </div>
 
         <!-- View Full Menu Button -->
