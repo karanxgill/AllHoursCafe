@@ -78,7 +78,7 @@ namespace AllHoursCafe.API.Data
             switch (itemName)
             {
                 case "Classic Pancakes":
-                    return "classic-pancake.jpg";
+                    return "fluffy-pancake.jpg";
                 case "Chicken Caesar Salad":
                     return "chicken-caesar-salad.jpg";
                 case "Vegetable Stir Fry":
@@ -92,9 +92,9 @@ namespace AllHoursCafe.API.Data
                 case "Fruit Tart":
                     return "fruit-tart.jpg";
                 case "Avocado Toast":
-                    return "Avocado-Toast.jpg";
+                    return "avocado-toast.jpg";
                 case "Breakfast Burrito":
-                    return "Breakfast-Burrito.jpg";
+                    return "breakfast-burrito.jpg";
                 case "Turkey Club Sandwich":
                     return "turkey-club-sandwich.jpg";
                 case "Grilled Salmon":
