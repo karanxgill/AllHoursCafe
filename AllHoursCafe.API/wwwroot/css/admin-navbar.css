@@ -3,8 +3,10 @@
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     padding: 8px 0;
     transition: all 0.3s ease;
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
     z-index: 1000;
     height: 70px;
     background-color: #571017; /* Ensure consistent background color */
@@ -534,3 +536,6 @@
     margin-left: 0.5rem !important;
 }
 
+.admin-container, .container.admin-container, .container-fluid.admin-container {
+    margin-top: 80px !important;
+}

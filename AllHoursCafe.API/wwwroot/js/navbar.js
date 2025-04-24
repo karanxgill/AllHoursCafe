@@ -40,17 +40,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
     const navLeft = document.querySelector('.nav-left');
     const navRight = document.querySelector('.nav-right');
+    const navbar = document.querySelector('.navbar');
 
     if (mobileMenuToggle) {
-        console.log('Mobile menu toggle found:', mobileMenuToggle);
-
         mobileMenuToggle.addEventListener('click', function(event) {
-            console.log('Mobile menu toggle clicked');
             event.preventDefault();
             event.stopPropagation();
 
+            // Toggle menu visibility
             navLeft.classList.toggle('show');
             navRight.classList.toggle('show');
+
+            // Add a class to the navbar to adjust its height when menu is open
+            navbar.classList.toggle('menu-open');
 
             // Toggle icon between bars and times
             const icon = mobileMenuToggle.querySelector('i');
@@ -73,6 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
             navLeft.classList.contains('show')) {
             navLeft.classList.remove('show');
             navRight.classList.remove('show');
+            navbar.classList.remove('menu-open');
 
             const icon = mobileMenuToggle.querySelector('i');
             icon.classList.remove('fa-times');
@@ -82,13 +85,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Close mobile menu when window is resized to desktop size
     window.addEventListener('resize', function() {
-        if (window.innerWidth > 768 && navLeft.classList.contains('show')) {
+        if (window.innerWidth > 1250 && navLeft.classList.contains('show')) {
             navLeft.classList.remove('show');
             navRight.classList.remove('show');
+            navbar.classList.remove('menu-open');
 
             const icon = mobileMenuToggle.querySelector('i');
             icon.classList.remove('fa-times');
             icon.classList.add('fa-bars');
         }
     });
+
+    // Add sticky class to sidebar/dropdown if present
+    var stickySidebar = document.querySelector('.admin-sidebar, .menu-sidebar, .category-dropdown-content');
+    if (stickySidebar) {
+        stickySidebar.classList.add('sticky-sidebar');
+    }
 });
