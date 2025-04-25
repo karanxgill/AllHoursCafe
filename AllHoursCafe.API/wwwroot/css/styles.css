@@ -59,7 +59,7 @@ header {
 
 .navbar {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     background-color: white;
     border-top: 5px solid #a8e0e0;
@@ -69,6 +69,35 @@ header {
     height: 100%;
     transition: all var(--transition-duration) ease;
     position: relative;
+}
+
+.nav-left, .nav-right {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.nav-left {
+    flex: 1 0 0%;
+    justify-content: flex-end;
+    gap: 26px;
+    padding-right: 20px;
+}
+
+.nav-center {
+    flex: 0 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    margin: 0 40px;
+}
+
+.nav-right {
+    flex: 1 0 0%;
+    justify-content: flex-start;
+    gap: 26px;
+    padding-left: 20px;
 }
 
 .mobile-menu-toggle {
@@ -190,15 +219,28 @@ header.shrink .logo-img {
 }
 
 .nav-left {
-    justify-content: flex-end;
+    justify-content: center;
     gap: 26px;
     padding-right: 20px;
 }
 
 .nav-right {
-    justify-content: flex-start;
+    justify-content: center;
     gap: 26px;
     padding-left: 20px;
+}
+
+@media (max-width: 991px) {
+    .navbar {
+        display: flex;
+        flex-direction: column;
+    }
+    .nav-left, .nav-center, .nav-right {
+        flex: unset;
+        justify-content: center;
+        padding: 0;
+        margin: 0;
+    }
 }
 
 /* Navigation links */
@@ -527,6 +569,17 @@ footer {
 
     .auth-form {
         padding: 1.5rem;
+    }
+}
+
+@media (max-width: 991px) {
+    .navbar {
+        display: flex;
+        flex-direction: column;
+    }
+    .nav-left, .nav-center, .nav-right {
+        justify-content: center;
+        padding: 0;
     }
 }
 
@@ -882,20 +935,18 @@ footer {
 /* Utility Class: Center Admin and Logout Buttons/Links */
 .admin-logout-center {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    width: 100%;
-    margin-top: 2rem;
-    margin-bottom: 2rem;
-    gap: 1.5rem;
+    gap: 12px;
+    margin-left: 0;
 }
 
-/* Responsive: make sure button stays centered on mobile too */
-@media (max-width: 768px) {
+@media (min-width: 1200px) {
     .admin-logout-center {
-        margin-top: 1.2rem;
-        margin-bottom: 1.2rem;
+        justify-content: flex-start;
+        margin-left: 0;
+    }
+    .nav-right {
+        justify-content: center;
     }
 }
 
@@ -924,9 +975,10 @@ footer {
     }
 
     .navbar {
-        flex-wrap: wrap;
-        width: 100%;
+        display: flex;
         flex-direction: column;
+        width: 100%;
+        flex-wrap: wrap;
         position: relative;
     }
 
