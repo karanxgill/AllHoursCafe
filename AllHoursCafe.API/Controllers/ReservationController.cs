@@ -13,12 +13,15 @@ namespace AllHoursCafe.API.Controllers
         private readonly ApplicationDbContext _context;
         private readonly ILogger<ReservationController> _logger;
         private readonly PayUService _payUService;
+        private readonly AppUrlService _appUrlService;
 
-        public ReservationController(ApplicationDbContext context, ILogger<ReservationController> logger, PayUService payUService)
+        public ReservationController(ApplicationDbContext context, ILogger<ReservationController> logger,
+            PayUService payUService, AppUrlService appUrlService)
         {
             _context = context;
             _logger = logger;
             _payUService = payUService;
+            _appUrlService = appUrlService;
         }
 
         // GET: /Reservation
@@ -181,8 +184,8 @@ namespace AllHoursCafe.API.Controllers
                     { "firstname", reservation.Name ?? string.Empty },
                     { "email", reservation.Email ?? string.Empty },
                     { "phone", reservation.PhoneNumber ?? string.Empty },
-                    { "surl", "http://localhost:5002/Reservation/PaymentSuccess/" + reservation.Id },
-                    { "furl", "http://localhost:5002/Reservation/PaymentFailure/" + reservation.Id }
+                    { "surl", _appUrlService.GetUrl($"Reservation/PaymentSuccess/{reservation.Id}") },
+                    { "furl", _appUrlService.GetUrl($"Reservation/PaymentFailure/{reservation.Id}") }
                 };
 
                 // Save transaction ID and ensure payment method is set
@@ -278,8 +281,8 @@ namespace AllHoursCafe.API.Controllers
                     { "firstname", reservation.Name ?? string.Empty },
                     { "email", reservation.Email ?? string.Empty },
                     { "phone", reservation.PhoneNumber ?? string.Empty },
-                    { "surl", "http://localhost:5002/Reservation/PaymentSuccess/" + reservation.Id },
-                    { "furl", "http://localhost:5002/Reservation/PaymentFailure/" + reservation.Id }
+                    { "surl", _appUrlService.GetUrl($"Reservation/PaymentSuccess/{reservation.Id}") },
+                    { "furl", _appUrlService.GetUrl($"Reservation/PaymentFailure/{reservation.Id}") }
                 };
 
                 string hash = _payUService.GenerateHash(payUParams);
@@ -329,8 +332,8 @@ namespace AllHoursCafe.API.Controllers
                 { "firstname", reservation.Name ?? string.Empty },
                 { "email", reservation.Email ?? string.Empty },
                 { "phone", reservation.PhoneNumber ?? string.Empty },
-                { "surl", "http://localhost:5002/Reservation/PaymentSuccess/" + reservation.Id },
-                { "furl", "http://localhost:5002/Reservation/PaymentFailure/" + reservation.Id }
+                { "surl", _appUrlService.GetUrl($"Reservation/PaymentSuccess/{reservation.Id}") },
+                { "furl", _appUrlService.GetUrl($"Reservation/PaymentFailure/{reservation.Id}") }
             };
 
             string hash = _payUService.GenerateHash(payUParams);

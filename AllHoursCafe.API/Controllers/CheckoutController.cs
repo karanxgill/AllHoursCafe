@@ -23,10 +23,11 @@ namespace AllHoursCafe.API.Controllers
         private readonly ISavedAddressService _savedAddressService;
         private readonly PayUService _payUService;
         private readonly IEmailService _emailService;
+        private readonly AppUrlService _appUrlService;
 
         public CheckoutController(ApplicationDbContext context, ILogger<CheckoutController> logger,
             UserProfileService userProfileService, ISavedAddressService savedAddressService, PayUService payUService,
-            IEmailService emailService)
+            IEmailService emailService, AppUrlService appUrlService)
         {
             _context = context;
             _logger = logger;
@@ -34,6 +35,7 @@ namespace AllHoursCafe.API.Controllers
             _savedAddressService = savedAddressService;
             _payUService = payUService;
             _emailService = emailService;
+            _appUrlService = appUrlService;
         }
 
         // GET: /Checkout
@@ -677,8 +679,8 @@ namespace AllHoursCafe.API.Controllers
                             { "firstname", order.CustomerName ?? string.Empty },
                             { "email", order.CustomerEmail ?? string.Empty },
                             { "phone", order.CustomerPhone ?? string.Empty },
-                            { "surl", "http://localhost:5002/Checkout/PaymentSuccess/" + order.Id },
-                            { "furl", "http://localhost:5002/Checkout/PaymentFailure/" + order.Id },
+                            { "surl", _appUrlService.GetUrl($"Checkout/PaymentSuccess/{order.Id}") },
+                            { "furl", _appUrlService.GetUrl($"Checkout/PaymentFailure/{order.Id}") },
                             // Add any other required fields if needed
                         };
 

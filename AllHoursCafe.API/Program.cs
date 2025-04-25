@@ -173,6 +173,9 @@ builder.Services.AddScoped<ISavedAddressService, SavedAddressService>();
 // Register PayU Service
 builder.Services.AddScoped<PayUService>();
 
+// Register AppUrl Service
+builder.Services.AddScoped<AppUrlService>();
+
 var app = builder.Build();
 
 // Ensure database is created, migrations are applied, and data is seeded
