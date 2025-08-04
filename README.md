@@ -165,4 +165,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## Acknowledgements
 - Images from Unsplash
 - Icons from Font Awesome
-- Developed by All Hours Cafe Team
+- Developed by Karanbeer Singh
